@@ -6,24 +6,24 @@
 // 2. Rarely present on physical machines
 // 3. Common across versions VBoxGuest, VBoxService, etc
 
-void dont_execute(){
+void vm_detected(){
     /*
         MessageBox                  CREATE AN WINDOWS ALERT
         the first L             DESCRIPTION OF THE ALERT
-        the secont L            TITLE OF THE ALERT
+        the second L            TITLE OF THE ALERT
     */
     MessageBox(NULL, L"VirtualBox registry detected - VM environment", L"VM Detector", MB_OK);
-    printf("THIS MACHINE DOESN'T HAVE REAL PC REGEDIT");
+    printf("[-]THIS MACHINE DOESN'T HAVE REAL PC REGEDIT");
 }
 
-void execute(){
+void physical_machine(){
     /*
     MessageBox                  CREATE AN WINDOWS ALERT
         the first L             DESCRIPTION OF THE ALERT
         the secont L            TITLE OF THE ALERT
     */
     MessageBox(NULL, L"Real Machine Detected", L"VM Detector", MB_OK);
-    printf("THIS MACHINE HAS REAL PC REGEDIT.");
+    printf("[-] THIS MACHINE HAS REAL PC REGEDIT.");
 }
 
 
@@ -53,10 +53,12 @@ int main(){
     */
     result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyPatch, 0, KEY_READ, &hKey);
 
-    if(result != ERROR_SUCCESS){
+    if(result == ERROR_SUCCESS){
         // Key doesn't exist (likely physical machine)
-        dont_execute();
+        vm_detected();
+        //CLOSE HANDLE OF THE REGEDIT
+        RegCloseKey(hKey);
     }   else{
-        execute();
+        physical_machine();
     }
 }
